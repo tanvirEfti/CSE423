@@ -47,37 +47,45 @@ def KeyboardListener(key, x, y):
   
     
 def specialKeyListener(key, x, y):
-    global wind_shift
+    global wind_shift, rain_speed
 
     if key == GLUT_KEY_LEFT:
-        wind_shift += 2  
+        if wind_shift > 0:  
+            wind_shift = 0
+            rain_speed = 5
+        else:
+            wind_shift -= 1  
+            rain_speed = min(rain_speed + 0.5, 5)  #max speed 5
 
-    if key == GLUT_KEY_RIGHT:
-        wind_shift -= 2 
+    elif key == GLUT_KEY_RIGHT:
+        if wind_shift < 0:  
+            wind_shift = 0
+            rain_speed = 5
+        else:
+            wind_shift += 1  
+            rain_speed = min(rain_speed + 0.5, 5) #max speed 5
 
-    glutPostRedisplay() 
-
+    glutPostRedisplay()
 
 
 def drawRain():
-    global raindrops, wind_shift
+    global raindrops, wind_shift, rain_speed
 
-    glColor3f(0.0, 0.0, 0.0)  
-    glLineWidth(2)  
+    glColor3f(0.2, 0.2, 0.8)  
+    glLineWidth(2.6)
     glBegin(GL_LINES)
 
     for i in raindrops:
         i["y"] -= rain_speed  
         i["x"] += wind_shift  
-        
-    
+
+       
         if i["y"] < 0:
-            i["y"] = random.uniform(0, 650)
-            i["x"] = random.uniform(0, 1000)  
-        
-            
+            i["y"] = random.uniform(650,-650)  
+            i["x"] = random.uniform(-1000, 1000)  
+
         glVertex2f(i["x"], i["y"])
-        glVertex2f(i["x"], i["y"] -12)  
+        glVertex2f(i["x"] + wind_shift, i["y"] - 40)  
 
     glEnd()
     glutPostRedisplay()
